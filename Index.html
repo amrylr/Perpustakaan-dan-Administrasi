@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Administrasi Cibada</title>
+<style>
+:root{--tx:#0f3d33;--mut:#4b6b62;--g:#16a34a;--t:#0d9488;--y:#facc15;--gl:rgba(255,255,255,.55);--bd:rgba(255,255,255,.75)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--tx);font:15px/1.5 'Nunito','Segoe UI',system-ui,sans-serif;background:linear-gradient(135deg,#d1fae5,#ccfbf1 45%,#fef9c3) fixed}
+body::before,body::after{content:"";position:fixed;z-index:-1;border-radius:50%;filter:blur(70px);opacity:.55}
+body::before{width:420px;height:420px;background:#34d399;top:-100px;left:-80px}
+body::after{width:380px;height:380px;background:#fde047;bottom:-100px;right:-60px}
+.glass,.card,header,.stat,.modal>div{background:var(--gl);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--bd);box-shadow:0 8px 32px rgba(13,148,136,.15)}
+header{position:sticky;top:0;z-index:30;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin:12px;padding:12px 18px;border-radius:18px}
+.brand h1{margin:0;font-size:1.2rem;color:var(--t)}.brand small{color:var(--mut)}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;position:relative}
+#gs{width:min(280px,60vw)}#gr{position:absolute;top:46px;right:0;width:min(420px,92vw);max-height:340px;overflow:auto;border-radius:14px;display:none;background:rgba(255,255,255,.95)}
+#gr div{padding:9px 12px;border-bottom:1px solid #d1fae5;cursor:pointer;font-size:.88rem}#gr div:hover{background:#ecfdf5}#gr b{color:var(--t)}
+nav{display:flex;flex-wrap:wrap;gap:8px;padding:0 12px}
+button,input,select{font:inherit}
+.mt,.st{border:0;cursor:pointer;border-radius:999px;padding:9px 18px;background:rgba(255,255,255,.5);color:var(--tx);font-weight:700}
+.st{padding:7px 14px;font-weight:600;background:rgba(255,255,255,.35)}
+.mt.on{background:linear-gradient(135deg,var(--g),var(--t));color:#fff}.st.on{background:var(--y);color:#422006}
+main{max-width:1320px;margin:0 auto;padding:14px 12px 90px}
+section{display:none}section.on{display:block}
+.card{border-radius:18px;padding:18px;margin-bottom:18px}.card h2{margin:0 0 12px;font-size:1.05rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.full{grid-column:1/-1}
+label{display:block;font-size:.82rem;color:var(--mut);margin-bottom:3px;font-weight:600}
+input,select{width:100%;background:rgba(255,255,255,.75);color:var(--tx);border:1px solid #a7f3d0;border-radius:10px;padding:9px 11px}
+input:focus,select:focus,button:focus-visible{outline:3px solid #5eead4;outline-offset:1px}
+.btn{background:linear-gradient(135deg,var(--g),var(--t));color:#fff;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;font-weight:700}
+.btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.5;cursor:wait}
+.btn.sec{background:rgba(255,255,255,.7);color:var(--tx);border:1px solid #a7f3d0}.btn.sm{padding:4px 10px;font-size:.8rem;border-radius:8px}.btn.dn{background:#dc2626}.btn.yl{background:var(--y);color:#422006}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pv{margin:14px 0;padding:12px 14px;border:2px dashed var(--t);border-radius:12px;display:flex;flex-wrap:wrap;gap:8px 28px;background:rgba(250,204,21,.18)}
+.pv span{display:block;font-size:.78rem;color:var(--mut)}.pv b{font-size:1.15rem;font-family:ui-monospace,Consolas,monospace}
+.bk{display:flex;gap:6px;margin-bottom:6px}
+.bar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;margin-bottom:12px;align-items:center}.bar h2{margin:0}.bar input,.bar select{width:auto;min-width:150px}
+.wrap{overflow-x:auto;border-radius:12px;background:rgba(255,255,255,.5)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th{background:linear-gradient(135deg,#bbf7d0,#99f6e4);text-align:left;padding:9px 10px;white-space:nowrap;font-size:.8rem}
+td{padding:8px 10px;border-bottom:1px solid rgba(13,148,136,.15);vertical-align:top}tr:hover td{background:rgba(250,204,21,.15)}
+.ac{white-space:nowrap}.kosong{text-align:center;color:var(--mut);padding:26px!important}
+.bd{padding:2px 9px;border-radius:99px;font-size:.78rem;font-weight:700}.Dipinjam{background:#fef08a;color:#713f12}.Terlambat{background:#fecaca;color:#991b1b}.Dikembalikan{background:#bbf7d0;color:#14532d}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.stat{border-radius:18px;padding:18px;border-left:6px solid var(--y)}.stat span{color:var(--mut);font-weight:600}.stat b{display:block;font-size:2.2rem;color:var(--t)}
+.fab{position:fixed;right:18px;bottom:18px;width:56px;height:56px;border-radius:50%;border:0;font-size:2rem;line-height:1;background:var(--y);color:#422006;box-shadow:0 8px 24px rgba(0,0,0,.25);cursor:pointer;z-index:40}
+.modal{position:fixed;inset:0;background:rgba(15,61,51,.4);display:none;align-items:center;justify-content:center;padding:14px;z-index:70}.modal.on{display:flex}
+.modal>div{width:min(720px,100%);max-height:92vh;overflow:auto;border-radius:18px;padding:20px;background:rgba(255,255,255,.88)}
+#ld{position:fixed;inset:0;background:rgba(255,255,255,.5);display:none;align-items:center;justify-content:center;z-index:90}
+#ld i{width:46px;height:46px;border:5px solid #99f6e4;border-top-color:var(--g);border-radius:50%;animation:s .8s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;max-width:min(420px,92vw);padding:12px 18px;border-radius:12px;background:#065f46;color:#fff;z-index:95;display:none}#toast.er{background:#b91c1c}
+.hint{text-align:center;color:var(--mut);font-size:.8rem;padding-bottom:14px}
+.bk input[type=number]{width:96px;flex:none}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}.chip{border:1px solid #5eead4;background:rgba(255,255,255,.7);border-radius:99px;padding:2px 10px;font-size:.78rem;cursor:pointer;color:var(--tx)}.chip:hover{background:var(--y)}
+.stk{display:block;font-size:.78rem;color:var(--mut);margin:-2px 0 6px}.stk.w{color:#92400e}.stk.e{color:#b91c1c;font-weight:700}
+#pa{display:none}
+@media print{@page{size:A4 landscape;margin:12mm}body>*:not(#pa){display:none!important}body::before,body::after{display:none}body{background:#fff;color:#000}#pa{display:block;color:#000}
+.kop{display:flex;align-items:center;gap:14px;border-bottom:4px double #000;padding-bottom:8px;margin-bottom:10px;text-align:center}.kop img{height:72px}.kop div{flex:1}.kop h3,.kop h4,.kop p{margin:0}.kop h3{font-size:14pt}.kop h4{font-size:16pt}.kop p{font-size:10pt}
+#pa table{width:100%;font-size:9pt;border-collapse:collapse}#pa th,#pa td{border:1px solid #000;padding:4px 6px;background:#fff;color:#000}#pa th{background:#e5e7eb;-webkit-print-color-adjust:exact;print-color-adjust:exact}.ttd2{display:flex;justify-content:space-between;margin-top:18px;page-break-inside:avoid}.ttd2 div{text-align:center;min-width:240px}.ttd2 p{margin:0}}
+@media(prefers-reduced-motion:reduce){#ld i{animation-duration:3s}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><h1>ADMINISTRASI CIBADA</h1><small>Perpustakaan dan Persuratan</small></div>
+  <div class="tools">
+    <input id="gs" type="search" placeholder="Cari di semua data ( / )" autocomplete="off" aria-label="Pencarian global">
+    <div id="gr" class="glass"></div>
+    <select id="thn" aria-label="Filter tahun" style="width:auto"></select>
+    <button class="btn sec" id="muat" type="button">Muat ulang</button>
+  </div>
+</header>
+<nav><span id="nav" class="row"></span><span id="sub" class="row"></span></nav>
+<main>
+  <section id="s-reg"></section><section id="s-pinjam"></section>
+  <section id="s-masuk"></section><section id="s-keluar"></section>
+  <section id="s-dash"><div class="stats" id="stats"></div></section>
+</main>
+<p class="hint">Pintasan: / cari &nbsp;|&nbsp; N tambah data &nbsp;|&nbsp; Enter kolom berikutnya &nbsp;|&nbsp; Alt+1..5 pindah halaman &nbsp;|&nbsp; Esc tutup</p>
+<button class="fab" id="fab" type="button" title="Tambah cepat (N)" aria-label="Tambah cepat">+</button>
+<div id="dls"></div>
+<div class="modal" id="md"><div id="mb"></div></div>
+<div id="ld"><i></i></div><div id="toast" role="status"></div>
+<div id="pa"></div>
+
+<script>
+// ===== KONFIGURASI: tempel URL Web App Apps Script (berakhiran /exec) =====
+const API_URL = 'https://script.google.com/macros/s/AKfycbz-_M1MufmF_3x7DE_KJ_aZHBBaatUe8CdYVP5c6O96u8d6tsHytwDLhd1o189LFtmP/exec';
+
+const ORD = ['reg','pinjam','masuk','keluar','dash'];
+const CFG = {
+  reg: {sheet:'Buku Registrasi',g:'perpus',lb:'Buku Registrasi',title:'Input buku baru',hist:'Riwayat registrasi buku',dk:'Tanggal Masuk',
+    cols:['Nomor','Tanggal Masuk','Nomor Induk','Nomor Registrasi','Judul','Pengarang','Penerbit','Tempat','Tahun Terbit','Sumber Perolehan','Jumlah Eksemplar','Keterangan'],
+    ed:['Judul','Pengarang','Penerbit','Tempat','Tahun Terbit','Sumber Perolehan','Keterangan'],
+    f:[{k:'Tanggal Masuk',t:'date',r:1},{k:'Judul',r:1},{k:'Pengarang'},{k:'Penerbit'},{k:'Tempat'},{k:'Tahun Terbit',sel:'tahun'},
+      {k:'Sumber Perolehan',list:['Pembelian','Dana BOS','Hibah','Sumbangan','Bantuan Pemerintah'],chips:1},{k:'Jumlah Eksemplar',t:'number',min:1,r:1,na2:1},{k:'Keterangan',v:'Koleksi Baru'}]},
+  pinjam: {sheet:'Peminjam',g:'perpus',lb:'Peminjaman',title:'Catat peminjaman',hist:'Daftar peminjaman',dk:'Tanggal Pinjam',
+    cols:['Nomor','Nomor Transaksi','Tanggal Pinjam','Nama Peminjam','NIP/NIS','Kelas','Judul Buku','Jatuh Tempo','Tanggal Kembali','Status','Keterangan','Jumlah Eksemplar'],
+    hide:['Jatuh Tempo'],
+    ed:['Nama Peminjam','NIP/NIS','Kelas','Tanggal Kembali','Keterangan','Jumlah Eksemplar'],
+    f:[{k:'Tanggal Pinjam',t:'date',r:1},{k:'Nama Peminjam',r:1},{k:'NIP/NIS'},{k:'Kelas'},
+      {k:'Judul Buku',t:'books'},{k:'Keterangan'},{k:'Jumlah Eksemplar',t:'number',min:1,r:1,na:1},{k:'Tanggal Kembali',t:'date',na:1}]},
+  masuk: {sheet:'Surat Masuk',g:'surat',lb:'Surat Masuk',title:'Agenda surat masuk',hist:'Tabel disposisi surat masuk',dk:'Tanggal Terima',
+    cols:['Nomor','Nomor Agenda','Tanggal Terima','Nomor Surat','Tanggal Surat','Pengirim / Instansi','Perihal','Sifat Surat','Tujuan / Disposisi','Keterangan'],
+    ed:['Nomor Surat','Tanggal Surat','Pengirim / Instansi','Perihal','Sifat Surat','Tujuan / Disposisi','Keterangan'],
+    f:[{k:'Tanggal Terima',t:'date',r:1},{k:'Nomor Surat',r:1},{k:'Tanggal Surat',t:'date'},{k:'Pengirim / Instansi',r:1},{k:'Perihal',r:1},
+      {k:'Sifat Surat',sel:['Biasa','Penting','Segera','Rahasia'],chips:1},{k:'Tujuan / Disposisi',chips:1},{k:'Keterangan'}]},
+  keluar: {sheet:'Surat Keluar',g:'surat',lb:'Surat Keluar',title:'Nomor urut surat keluar',hist:'Arsip surat keluar',dk:'Tanggal Surat',
+    cols:['Nomor','Nomor Urut','Tanggal Surat','Nomor Surat','Tujuan / Penerima','Perihal','Penandatangan','Lampiran','Keterangan'],
+    ed:['Nomor Surat','Tujuan / Penerima','Perihal','Penandatangan','Lampiran','Keterangan'],
+    f:[{k:'Tanggal Surat',t:'date',r:1},{k:'Nomor Surat'},{k:'Tujuan / Penerima',r:1},{k:'Perihal',r:1},{k:'Penandatangan'},{k:'Lampiran'},{k:'Keterangan'}]}
+};
+// ===== KOP CETAK: lengkapi data berikut (kosong = tidak ditampilkan) =====
+const KOP = {
+  baris1: 'PERPUSTAKAAN', baris2: 'SD NEGERI CIBATOK 02',
+  alamat: 'Jl. Kapt Dasuki Bakri Km 02 Cibeureum Rt 02 Rw 01, Cibatok 2, Cibungbulang, Kabupaten Bogor',
+  kontak: '',
+  logo: 'https://raw.githubusercontent.com/amrylr/Twibbon-Universal/refs/heads/main/LOGO.jpg',
+  ttd: [
+    {atas: 'Mengetahui,', jabatan: 'Kepala Sekolah', nama: 'Siti Yoyoh, S.Pd.', nip: '196911051993012003'},
+    {atas: '', jabatan: 'Kepala Perpustakaan', nama: 'Amri Lamri, S.Pd.', nip: '199906182025211050'}
+  ]
+};
+const REM = new Set(['reg', 'pinjam']); // form yang mengingat tanggal terakhir digunakan
+const BYSHEET = {}, DATA = {}, LAST = {}, FIL = {};
+Object.keys(CFG).forEach(t => { const c = CFG[t]; BYSHEET[c.sheet] = t; DATA[t] = []; c.di = c.cols.indexOf(c.dk); });
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = (n, l) => String(n).padStart(l, '0');
+const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+let T = 'reg', tmr;
+
+const loading = on => $('#ld').style.display = on ? 'flex' : 'none';
+function toast(m, er) { const e = $('#toast'); e.textContent = m; e.className = er ? 'er' : ''; e.style.display = 'block'; clearTimeout(tmr); tmr = setTimeout(() => e.style.display = 'none', er ? 6000 : 4500); }
+function siap() { if (!API_URL || API_URL.indexOf('PASTE_') === 0) { toast('Isi dulu API_URL di index.html dengan URL Web App Apps Script.', true); return false; } return true; }
+// Status peminjaman: Dikembalikan jika Tanggal Kembali terisi, selain itu Dipinjam
+function st(r) { return r[8] ? 'Dikembalikan' : 'Dipinjam'; }
+
+// ===== Form =====
+const ingat = (t, k) => { try { return (JSON.parse(localStorage.getItem('cibada.tgl')) || {})[t + '|' + k] || ''; } catch (e) { return ''; } };
+function simpanIngat(t, d) {
+  try {
+    const o = JSON.parse(localStorage.getItem('cibada.tgl')) || {};
+    CFG[t].f.forEach(x => { if (x.t === 'date' && d[x.k]) o[t + '|' + x.k] = d[x.k]; });
+    localStorage.setItem('cibada.tgl', JSON.stringify(o));
+  } catch (e) { /* penyimpanan browser tidak tersedia */ }
+}
+function tahunOpt(v) {
+  const a = [''], y = new Date().getFullYear();
+  for (let i = y; i >= 1980; i--) a.push(String(i));
+  if (v && a.indexOf(String(v)) < 0) a.push(String(v));
+  return a;
+}
+function fld(t, x, i, v) {
+  const n = esc(x.k);
+  if (x.t === 'books') return '<div class="full"><label>Daftar buku dipinjam *</label><div id="bk"></div><button type="button" class="btn sec sm" id="addbk">+ Tambah buku</button></div>';
+  let h;
+  if (x.sel === 'tahun') h = '<select name="' + n + '">' + tahunOpt(v).map(o => '<option value="' + o + '"' + (o === String(v == null ? '' : v) ? ' selected' : '') + '>' + (o || '- Pilih tahun -') + '</option>').join('') + '</select>';
+  else if (x.sel) h = '<select name="' + n + '">' + x.sel.map(o => '<option' + (o === v ? ' selected' : '') + '>' + o + '</option>').join('') + '</select>';
+  else {
+    if (x.t === 'date' && v == null) v = REM.has(t) ? ingat(t, x.k) : (x.blank ? '' : today());
+    h = '<input name="' + n + '" type="' + (x.t || 'text') + '"' + (x.r ? ' required' : '') + (x.min != null ? ' min="' + x.min + '"' : '') + (x.max != null ? ' max="' + x.max + '"' : '') +
+      (!x.t ? ' list="dl-' + t + i + '" autocomplete="off"' : '') + ' value="' + esc(v == null ? (x.v || '') : v) + '">';
+  }
+  return '<div><label>' + n + (x.r ? ' *' : '') + '</label>' + h + (x.chips ? '<div class="chips" data-ck="' + t + '|' + n + '"></div>' : '') + '</div>';
+}
+function addBk(v, j) {
+  const d = document.createElement('div'); d.className = 'bkw';
+  d.innerHTML = '<div class="bk"><input name="Judul Buku" list="dl-buku" placeholder="Judul buku" autocomplete="off" required value="' + esc(v || '') + '"><input name="Jumlah Eksemplar" type="number" min="1" required value="' + esc(j || 1) + '" title="Jumlah eksemplar" aria-label="Jumlah eksemplar"><button type="button" class="btn sec sm" data-a="rb" aria-label="Hapus baris">&#10005;</button></div><small class="stk"></small>';
+  $('#bk').appendChild(d);
+}
+function resetBk() { $('#bk').innerHTML = ''; addBk(); }
+function nilai(f) {
+  const o = {}, fd = new FormData(f), multi = f.id === 'f-pinjam';
+  new Set(fd.keys()).forEach(k => { const a = fd.getAll(k).map(x => String(x).trim()); o[k] = multi && (k === 'Judul Buku' || k === 'Jumlah Eksemplar') ? a : (a[0] || ''); });
+  return o;
+}
+
+// ===== Bantuan pengisian: stok, draf, Enter, chips =====
+const nj = x => String(x || '').trim().toLowerCase();
+function stok(j) {
+  const k = nj(j); let tot = 0, pj = 0;
+  DATA.reg.forEach(r => { if (nj(r[4]) === k) tot += parseInt(r[10], 10) || 0; });
+  DATA.pinjam.forEach(r => { if (nj(r[6]) === k && !r[8]) pj += parseInt(r[11], 10) || 1; });
+  return {tot: tot, ada: tot - pj};
+}
+function cekStok() {
+  const rows = [...document.querySelectorAll('#bk .bkw')], need = {}; let lebih = false;
+  const jd = w => w.querySelector('[name="Judul Buku"]').value;
+  rows.forEach(w => { const j = nj(jd(w)); if (j) need[j] = (need[j] || 0) + (parseInt(w.querySelector('[name="Jumlah Eksemplar"]').value, 10) || 0); });
+  rows.forEach(w => {
+    const j = nj(jd(w)), h = w.querySelector('.stk'); h.className = 'stk'; h.textContent = '';
+    if (!j) return;
+    const s = stok(jd(w));
+    if (!s.tot) { h.textContent = 'Judul ini belum ada di Buku Registrasi, stok tidak bisa dicek.'; h.classList.add('w'); }
+    else if (need[j] > s.ada) { h.textContent = 'Melebihi stok: tersedia ' + Math.max(s.ada, 0) + ' eksemplar, diminta ' + need[j] + '.'; h.classList.add('e'); lebih = true; }
+    else h.textContent = 'Tersedia ' + s.ada + ' eksemplar.';
+  });
+  return lebih;
+}
+const DRK = t => 'cibada.draft.' + t;
+function simpanDraf(t) { try { localStorage.setItem(DRK(t), JSON.stringify(nilai($('#f-' + t)))); } catch (e) { /* abaikan */ } }
+function pulihDraf(t) {
+  let d = null; try { d = JSON.parse(localStorage.getItem(DRK(t))); } catch (e) { /* abaikan */ }
+  if (!d) return;
+  const f = $('#f-' + t);
+  if (t === 'pinjam' && Array.isArray(d['Judul Buku']) && d['Judul Buku'].length) {
+    $('#bk').innerHTML = ''; d['Judul Buku'].forEach((j, i) => addBk(j, (d['Jumlah Eksemplar'] || [])[i]));
+  }
+  Object.keys(d).forEach(k => { if (Array.isArray(d[k])) return; const el = f.querySelector('[name="' + k + '"]'); if (el) el.value = d[k]; });
+  if ([...f.querySelectorAll('input[type=text]')].some(i => i.value && i.name !== 'Keterangan')) toast('Draf ' + CFG[t].lb + ' yang belum disimpan dipulihkan.');
+}
+function kosongkan(t) {
+  const f = $('#f-' + t); f.reset();
+  if (REM.has(t)) f.querySelectorAll('input[type=date]').forEach(i => i.value = ingat(t, i.name));
+  if (t === 'pinjam') resetBk();
+  try { localStorage.removeItem(DRK(t)); } catch (e) { /* abaikan */ }
+  preview(t);
+}
+function enterKey(e) {
+  if (e.key !== 'Enter' || !/^(INPUT|SELECT)$/.test(e.target.tagName)) return;
+  e.preventDefault();
+  const f = e.currentTarget, els = [...f.querySelectorAll('input:not([type=hidden]):not([disabled]),select:not([disabled])')], i = els.indexOf(e.target);
+  if (i < els.length - 1) els[i + 1].focus(); else f.requestSubmit();
+}
+function isiChips() {
+  document.querySelectorAll('.chips').forEach(c => {
+    const p = c.dataset.ck.split('|'), t = p[0], k = p[1], x = CFG[t].f.find(y => y.k === k), fr = {};
+    DATA[t].forEach(r => { const v = r[CFG[t].cols.indexOf(k)]; if (v) fr[v] = (fr[v] || 0) + 1; });
+    const base = x.sel || x.list || [], extra = Object.keys(fr).filter(v => base.indexOf(v) < 0).sort((a, b) => fr[b] - fr[a]);
+    c.innerHTML = base.concat(extra).slice(0, 10).map(v => '<button type="button" class="chip" data-chip="' + esc(v) + '">' + esc(v) + '</button>').join('');
+  });
+}
+
+// ===== Penomoran (pratinjau; backend menghitung ulang secara otoritatif) =====
+function hitung(t, v) {
+  const c = CFG[t], d = v[c.dk] || '';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return null;
+  const y = d.slice(0, 4), R = DATA[t].filter(r => String(r[c.di]).slice(0, 4) === y);
+  if (t === 'reg') {
+    const j = parseInt(v['Jumlah Eksemplar'], 10); if (!(j > 0)) return null;
+    let s = 0; R.forEach(r => s = Math.max(s, parseInt(String(r[3]).split('-')[1], 10) || 0));
+    return {'Nomor Induk': '001/' + pad(j, 3), 'Nomor Registrasi': y.slice(2) + '/' + pad(s + 1, 4) + '-' + pad(s + j, 4)};
+  }
+  let m = 0; R.forEach(r => m = Math.max(m, parseInt(String(r[1]).split('/')[t === 'pinjam' ? 2 : 0], 10) || 0));
+  if (t === 'masuk') return {'Nomor Agenda': pad(m + 1, 3) + '/SM/' + y};
+  if (t === 'pinjam') return {'Nomor Transaksi': 'PJ/' + y + '/' + pad(m + 1, 3)};
+  return {'Nomor Urut': pad(m + 1, 3)};
+}
+function preview(t) {
+  const f = $('#f-' + t), h = hitung(t, nilai(f));
+  $('#pv-' + t).innerHTML = h ? Object.keys(h).map(k => '<div><span>' + k + ' (pratinjau)</span><b>' + esc(h[k]) + '</b></div>').join('')
+    : '<i>Nomor otomatis muncul setelah data penentu nomor diisi.</i>';
+}
+
+// ===== Bangun halaman =====
+function bangun() {
+  Object.keys(CFG).forEach(t => {
+    const c = CFG[t];
+    $('#s-' + t).innerHTML =
+      '<div class="card"><h2>' + c.title + '</h2><form id="f-' + t + '"><div class="grid">' + c.f.filter(x => !x.na).map((x, i) => fld(t, x, c.f.indexOf(x))).join('') + '</div>' +
+      '<div class="pv" id="pv-' + t + '"></div><div class="row"><button class="btn" type="submit">Simpan ke Google Sheets</button><button class="btn sec" type="button" data-a="clr" data-t="' + t + '">Bersihkan form</button></div></form></div>' +
+      '<div class="card tbl"><div class="bar"><h2>' + c.hist + '</h2><div class="row">' +
+      (t === 'pinjam' ? '<select id="sf" aria-label="Filter status"><option value="">Semua status</option><option>Dipinjam</option><option>Dikembalikan</option></select>' : '') +
+      '<input type="search" id="q-' + t + '" placeholder="Cari di tabel..." aria-label="Cari">' +
+      '<button class="btn sec sm" data-a="csv" data-t="' + t + '" type="button">Ekspor CSV</button><button class="btn sec sm" data-a="pr" data-t="' + t + '" type="button">Cetak</button></div></div>' +
+      '<div class="wrap"><table id="tb-' + t + '"></table></div></div>';
+    const f = $('#f-' + t);
+    f.addEventListener('input', () => { preview(t); simpanDraf(t); if (t === 'pinjam') cekStok(); });
+    f.addEventListener('keydown', enterKey);
+    f.addEventListener('submit', e => { e.preventDefault(); simpan(t); });
+    $('#q-' + t).addEventListener('input', () => tabel(t));
+  });
+  $('#sf').addEventListener('change', () => tabel('pinjam'));
+  $('#addbk').addEventListener('click', () => { addBk(); simpanDraf('pinjam'); });
+  // Pilih nama yang pernah meminjam: NIP/NIS dan Kelas terisi otomatis dari riwayat
+  $('#f-pinjam [name="Nama Peminjam"]').addEventListener('change', e => {
+    const r = DATA.pinjam.slice().reverse().find(x => x[3].toLowerCase() === e.target.value.trim().toLowerCase());
+    if (r) { $('#f-pinjam [name="NIP/NIS"]').value = r[4]; $('#f-pinjam [name="Kelas"]').value = r[5]; simpanDraf('pinjam'); }
+  });
+  // Pilih judul lama: Pengarang, Penerbit, Tempat, dan Sumber terisi otomatis (hanya kolom yang masih kosong)
+  $('#f-reg [name="Judul"]').addEventListener('change', e => {
+    const r = DATA.reg.slice().reverse().find(x => nj(x[4]) === nj(e.target.value));
+    if (!r) return;
+    [['Pengarang', 5], ['Penerbit', 6], ['Tempat', 7], ['Sumber Perolehan', 9]].forEach(([k, i]) => { const el = $('#f-reg [name="' + k + '"]'); if (el && !el.value) el.value = r[i]; });
+    simpanDraf('reg');
+  });
+  resetBk(); Object.keys(CFG).forEach(t => { pulihDraf(t); preview(t); }); cekStok();
+}
+function uniq(t, k) { const i = CFG[t].cols.indexOf(k), s = new Set(); DATA[t].forEach(r => r[i] && s.add(r[i])); return [...s]; }
+// Riwayat input: saran isian dari data yang pernah dimasukkan
+function isiRiwayat() {
+  let h = '';
+  Object.keys(CFG).forEach(t => CFG[t].f.forEach((x, i) => {
+    if (x.t || x.sel) return;
+    const s = new Set((x.list || []).concat(uniq(t, x.k)));
+    h += '<datalist id="dl-' + t + i + '">' + [...s].map(o => '<option value="' + esc(o) + '">').join('') + '</datalist>';
+  }));
+  h += '<datalist id="dl-buku">' + [...new Set(uniq('reg', 'Judul').concat(uniq('pinjam', 'Judul Buku')))].map(o => '<option value="' + esc(o) + '">').join('') + '</datalist>';
+  $('#dls').innerHTML = h;
+}
+
+// ===== Tabel =====
+function vi(t) { const c = CFG[t]; return c.cols.map((h, i) => i).filter(i => (c.hide || []).indexOf(c.cols[i]) < 0); }
+function tabel(t) {
+  const c = CFG[t], V = vi(t), q = $('#q-' + t).value.toLowerCase(), y = $('#thn').value, sf = t === 'pinjam' ? $('#sf').value : '', rows = [], act = {};
+  if (t === 'pinjam') DATA.pinjam.forEach(r => { if (!r[8]) act[r[1]] = (act[r[1]] || 0) + 1; });
+  DATA[t].forEach((r, i) => { if ((!y || String(r[c.di]).slice(0, 4) === y) && (!q || r.join(' ').toLowerCase().includes(q)) && (!sf || st(r) === sf)) rows.push([r, i]); });
+  rows.reverse(); FIL[t] = rows.slice();
+  LAST[t] = rows.map(([r]) => V.map(k => t === 'pinjam' && k === 9 ? st(r) : r[k]));
+  $('#tb-' + t).innerHTML = '<thead><tr>' + V.map(k => '<th>' + c.cols[k] + '</th>').join('') + '<th>Aksi</th></tr></thead><tbody>' +
+    (rows.length ? rows.map(([r, i]) => '<tr>' + V.map(k => '<td>' + (t === 'pinjam' && k === 9 ? '<span class="bd ' + st(r) + '">' + st(r) + '</span>' : esc(r[k])) + '</td>').join('') +
+      '<td class="ac">' + (t === 'pinjam' ? (!r[8] ? '<button class="btn sm yl" data-a="k" data-i="' + i + '">Kembalikan</button> ' : '') +
+        (!r[8] && act[r[1]] > 1 ? '<button class="btn sm yl" data-a="ka" data-i="' + i + '">Kembalikan semua</button> ' : '') +
+        '<button class="btn sm sec" data-a="bk" data-i="' + i + '">Bukti</button> ' : '') +
+      '<button class="btn sm sec" data-a="e" data-t="' + t + '" data-i="' + i + '">Edit</button> <button class="btn sm dn" data-a="d" data-t="' + t + '" data-i="' + i + '">Hapus</button></td></tr>').join('')
+      : '<tr><td class="kosong" colspan="' + (V.length + 1) + '">Belum ada data. Isi formulir di atas untuk menambah.</td></tr>') + '</tbody>';
+}
+function ringkas() {
+  const y = $('#thn').value, f = t => DATA[t].filter(r => !y || String(r[CFG[t].di]).slice(0, 4) === y), reg = f('reg'), pj = f('pinjam');
+  const k = [['Total judul buku', reg.length], ['Total eksemplar', reg.reduce((s, r) => s + (parseInt(r[10], 10) || 0), 0)],
+    ['Eksemplar sedang dipinjam', pj.filter(r => st(r) === 'Dipinjam').reduce((n, r) => n + (parseInt(r[11], 10) || 1), 0)], 
+    ['Total surat masuk', f('masuk').length], ['Total surat keluar', f('keluar').length]];
+  $('#stats').innerHTML = k.map(a => '<div class="stat"><span>' + a[0] + (y ? ' (' + y + ')' : '') + '</span><b>' + a[1].toLocaleString('id-ID') + '</b></div>').join('');
+}
+function semua() { Object.keys(CFG).forEach(tabel); ringkas(); }
+function isiTahun() {
+  const s = {}; s[new Date().getFullYear()] = 1;
+  Object.keys(CFG).forEach(t => DATA[t].forEach(r => { const y = String(r[CFG[t].di]).slice(0, 4); if (/^\d{4}$/.test(y)) s[y] = 1; }));
+  const cur = $('#thn').value;
+  $('#thn').innerHTML = '<option value="">Semua tahun</option>' + Object.keys(s).sort().reverse().map(y => '<option>' + y + '</option>').join('');
+  $('#thn').value = cur;
+}
+
+// ===== API =====
+async function kirim(obj) {
+  // text/plain menghindari preflight CORS pada Apps Script
+  const res = await (await fetch(API_URL, {method: 'POST', body: JSON.stringify(obj)})).json();
+  if (!res.ok) throw new Error(res.error); return res;
+}
+async function muat() {
+  if (!siap()) return; loading(true);
+  try {
+    const res = await (await fetch(API_URL + '?action=all')).json();
+    if (!res.ok) throw new Error(res.error);
+    Object.keys(res.data).forEach(n => { if (BYSHEET[n]) DATA[BYSHEET[n]] = res.data[n].rows; });
+    isiTahun(); isiRiwayat(); isiChips(); semua(); cekStok(); Object.keys(CFG).forEach(preview);
+  } catch (e) { toast('Gagal memuat data: ' + e.message, true); }
+  loading(false);
+}
+async function aksi(fn, ok) {
+  if (!siap()) return; loading(true);
+  try { const r = await fn(); toast(typeof ok === 'function' ? ok(r) : ok); await muat(); return true; }
+  catch (e) { toast('Gagal: ' + e.message, true); loading(false); }
+}
+async function simpan(t) {
+  const f = $('#f-' + t), b = f.querySelector('[type=submit]'), d = nilai(f);
+  if (t === 'pinjam' && cekStok() && !confirm('Jumlah yang dipinjam melebihi stok tersedia. Tetap simpan?')) return;
+  b.disabled = true;
+  const ok = await aksi(() => kirim({action: 'add', sheet: CFG[t].sheet, data: d}), r => 'Tersimpan. ' + Object.keys(r.auto).map(k => k + ': ' + r.auto[k]).join(' | '));
+  b.disabled = false;
+  if (ok) { if (REM.has(t)) simpanIngat(t, d); kosongkan(t); f.querySelector('input,select').focus(); }
+}
+function edit(t, i) {
+  const c = CFG[t], r = DATA[t][i];
+  $('#mb').innerHTML = '<h2>Edit ' + c.lb + ' (Nomor ' + esc(r[0]) + ')</h2><form id="fe"><div class="grid">' +
+    c.f.map((x, k) => c.ed.includes(x.k) ? fld(t, x, k, r[c.cols.indexOf(x.k)]) : '').join('') +
+    '</div><p class="hint">Nomor otomatis dan kolom penentunya tidak dapat diedit agar penomoran tetap konsisten.</p><div class="row"><button class="btn" type="submit">Simpan perubahan</button><button type="button" class="btn sec" data-a="x">Batal</button></div></form>';
+  $('#md').classList.add('on'); isiChips(); $('#fe').addEventListener('keydown', enterKey);
+  $('#fe').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (await aksi(() => kirim({action: 'update', sheet: c.sheet, row: i + 2, nomor: r[0], data: nilai(e.target)}), 'Perubahan tersimpan.')) tutup();
+  });
+}
+const tutup = () => { $('#md').classList.remove('on'); $('#gr').style.display = 'none'; };
+
+// ===== Navigasi =====
+function go(t) {
+  T = t; const g = t === 'dash' ? 'dash' : CFG[t].g;
+  $('#nav').innerHTML = [['perpus', 'Perpustakaan', 'reg'], ['surat', 'Persuratan', 'masuk'], ['dash', 'Ringkasan', 'dash']]
+    .map(([k, l, d]) => '<button class="mt' + (k === g ? ' on' : '') + '" data-go="' + (k === g ? t : d) + '">' + l + '</button>').join('');
+  $('#sub').innerHTML = ORD.filter(x => x !== 'dash' && CFG[x].g === g).map(x => '<button class="st' + (x === t ? ' on' : '') + '" data-go="' + x + '">' + CFG[x].lb + '</button>').join('');
+  document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === 's-' + t));
+}
+function tambahCepat() {
+  if (T === 'dash') go('reg');
+  const i = document.querySelector('#s-' + T + ' form input:not([type=hidden])');
+  i.scrollIntoView({behavior: 'smooth', block: 'center'}); i.focus();
+}
+
+// ===== Pencarian global =====
+$('#gs').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase(), box = $('#gr');
+  if (q.length < 2) { box.style.display = 'none'; return; }
+  const h = [];
+  Object.keys(CFG).forEach(t => DATA[t].forEach(r => { if (h.length < 15 && r.join(' ').toLowerCase().includes(q)) h.push('<div data-r="' + t + '"><b>' + CFG[t].lb + '</b> &middot; ' + esc(r.slice(1, 5).join(' | ')) + '</div>'); }));
+  box.innerHTML = h.join('') || '<div>Tidak ada hasil.</div>'; box.style.display = 'block';
+});
+$('#gr').addEventListener('click', e => {
+  const d = e.target.closest('[data-r]'); if (!d) return;
+  const t = d.dataset.r; go(t); $('#q-' + t).value = $('#gs').value.trim(); tabel(t); $('#gr').style.display = 'none';
+  $('#tb-' + t).scrollIntoView({behavior: 'smooth'});
+});
+
+// ===== Ekspor CSV / cetak =====
+function csv(t) {
+  const L = [vi(t).map(k => CFG[t].cols[k])].concat(LAST[t] || []);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff' + L.map(r => r.map(x => '"' + String(x).replace(/"/g, '""') + '"').join(',')).join('\r\n')], {type: 'text/csv'}));
+  a.download = CFG[t].sheet.replace(/ /g, '_') + '_' + today() + '.csv'; a.click();
+}
+
+// ===== Cetak: kop + tabel, urut Nomor 1 di paling atas =====
+function kopHtml() {
+  const k = KOP;
+  return '<div class="kop">' + (k.logo ? '<img src="' + esc(k.logo) + '" alt="Logo">' : '') + '<div><h3>' + esc(k.baris1) + '</h3><h4>' + esc(k.baris2) + '</h4>' +
+    (k.alamat ? '<p>' + esc(k.alamat) + '</p>' : '') + (k.kontak ? '<p>' + esc(k.kontak) + '</p>' : '') + '</div></div>';
+}
+function ttdHtml(arr) {
+  return arr.length ? '<div class="ttd2">' + arr.map(p => '<div><p>' + esc(p.atas || '\u00a0') + '</p><p>' + esc(p.jabatan) + '</p><br><br><br><p><b><u>' + esc(p.nama) + '</u></b></p>' + (p.nip ? '<p>NIP. ' + esc(p.nip) + '</p>' : '') + '</div>').join('') + '</div>' : '';
+}
+function cetakSiap() {
+  // tunggu logo selesai dimuat agar ikut tercetak
+  const im = $('#pa img');
+  if (im && !im.complete) { let done = 0; const go = () => { if (!done++) window.print(); }; im.onload = go; im.onerror = go; setTimeout(go, 3000); }
+  else window.print();
+}
+const tglCetak = () => new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'});
+function cetak(t) {
+  const c = CFG[t], V = vi(t), y = $('#thn').value, rows = (FIL[t] || []).slice().sort((a, b) => a[1] - b[1]);
+  if (!rows.length) return toast('Tidak ada data untuk dicetak.', true);
+  $('#pa').innerHTML = kopHtml() + '<h3 style="text-align:center;margin:6px 0">' + esc(c.lb.toUpperCase()) + (y ? ' TAHUN ' + y : '') + '</h3>' +
+    '<table><thead><tr>' + V.map(k => '<th>' + c.cols[k] + '</th>').join('') + '</tr></thead><tbody>' +
+    rows.map(([r]) => '<tr>' + V.map(k => '<td>' + esc(t === 'pinjam' && k === 9 ? st(r) : r[k]) + '</td>').join('') + '</tr>').join('') + '</tbody></table>' +
+    '<p style="font-size:9pt">Dicetak: ' + tglCetak() + '</p>' + ttdHtml(KOP.ttd);
+  cetakSiap();
+}
+// Bukti peminjaman per transaksi: tanda tangan Peminjam dan Kepala Perpustakaan
+function bukti(i) {
+  const h = DATA.pinjam[i], R = DATA.pinjam.filter(r => r[1] === h[1]), pt = KOP.ttd.find(p => /perpustakaan/i.test(p.jabatan)) || {jabatan: 'Petugas Perpustakaan', nama: ''};
+  const info = [['Nomor Transaksi', h[1]], ['Tanggal Pinjam', h[2]], ['Nama Peminjam', h[3]], ['NIP/NIS', h[4]], ['Kelas', h[5]]];
+  $('#pa').innerHTML = kopHtml() + '<h3 style="text-align:center;margin:6px 0">BUKTI PEMINJAMAN BUKU</h3>' +
+    '<table style="width:auto;margin-bottom:10px"><tbody>' + info.map(a => '<tr><td style="border:0;padding:2px 14px 2px 0">' + a[0] + '</td><td style="border:0;padding:2px 0">: ' + esc(a[1]) + '</td></tr>').join('') + '</tbody></table>' +
+    '<table><thead><tr><th>No</th><th>Judul Buku</th><th>Jumlah Eksemplar</th><th>Tanggal Kembali</th></tr></thead><tbody>' +
+    R.map((r, n) => '<tr><td>' + (n + 1) + '</td><td>' + esc(r[6]) + '</td><td>' + esc(r[11] || 1) + '</td><td>' + esc(r[8]) + '</td></tr>').join('') + '</tbody></table>' +
+    '<p style="font-size:9pt">Dicetak: ' + tglCetak() + '</p>' +
+    ttdHtml([{atas: '', jabatan: 'Peminjam', nama: h[3], nip: ''}, {atas: '', jabatan: pt.jabatan, nama: pt.nama, nip: pt.nip}]);
+  cetakSiap();
+}
+// Pengembalian: tanggal kembali diisi lewat dialog (bawaan: tanggal kembali terakhir yang dipakai)
+function dlgKembali(ids) {
+  $('#mb').innerHTML = '<h2>Pengembalian buku</h2><p>' + ids.length + ' buku ditandai sudah dikembalikan:</p><ul>' +
+    ids.map(i => '<li>' + esc(DATA.pinjam[i][6]) + ' (' + esc(DATA.pinjam[i][11] || 1) + ' eks) - ' + esc(DATA.pinjam[i][3]) + '</li>').join('') +
+    '</ul><form id="fk"><label>Tanggal kembali *</label><input type="date" name="tg" required value="' + esc(ingat('pinjam', 'Tanggal Kembali')) + '"><div class="row" style="margin-top:12px"><button class="btn" type="submit">Simpan pengembalian</button><button type="button" class="btn sec" data-a="x">Batal</button></div></form>';
+  $('#md').classList.add('on'); $('#fk').tg.focus();
+  $('#fk').addEventListener('submit', async e => {
+    e.preventDefault(); const tg = e.target.tg.value;
+    if (await aksi(() => kirim({action: 'kembali', sheet: 'Peminjam', tanggal: tg, items: ids.map(i => ({row: i + 2, nomor: DATA.pinjam[i][0]}))}), 'Pengembalian tersimpan.')) { simpanIngat('pinjam', {'Tanggal Kembali': tg}); tutup(); }
+  });
+}
+
+// ===== Event global =====
+document.addEventListener('click', e => {
+  const ch = e.target.closest('.chip');
+  if (ch) { const el = ch.parentNode.parentNode.querySelector('[name]'); el.value = ch.dataset.chip; el.dispatchEvent(new Event('input', {bubbles: true})); el.focus(); return; }
+  const b = e.target.closest('[data-a],[data-go]'); if (!b) return;
+  if (b.dataset.go) return go(b.dataset.go);
+  const a = b.dataset.a, t = b.dataset.t, i = +b.dataset.i;
+  if (a === 'e') edit(t, i);
+  else if (a === 'd') { const r = DATA[t][i]; if (confirm('Hapus data nomor ' + r[0] + ' (' + (r[4] || r[3] || r[1]) + ')? Tindakan ini tidak bisa dibatalkan.')) aksi(() => kirim({action: 'delete', sheet: CFG[t].sheet, row: i + 2, nomor: r[0]}), 'Data dihapus.'); }
+  else if (a === 'k') dlgKembali([i]);
+  else if (a === 'ka') { const tx = DATA.pinjam[i][1], ids = []; DATA.pinjam.forEach((r, n) => { if (r[1] === tx && !r[8]) ids.push(n); }); dlgKembali(ids); }
+  else if (a === 'bk') bukti(i);
+  else if (a === 'clr') { kosongkan(t); toast('Form dibersihkan.'); }
+  else if (a === 'csv') csv(t);
+  else if (a === 'pr') cetak(t);
+  else if (a === 'rb') { if (document.querySelectorAll('#bk .bkw').length > 1) { b.closest('.bkw').remove(); simpanDraf('pinjam'); cekStok(); } }
+  else if (a === 'x') tutup();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') return tutup();
+  const tg = e.target.tagName, typing = /INPUT|SELECT|TEXTAREA/.test(tg);
+  if (e.altKey && /^Digit[1-5]$/.test(e.code)) { e.preventDefault(); go(ORD[+e.code.slice(5) - 1]); }
+  else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' || (!typing && e.key === '/')) { e.preventDefault(); $('#gs').focus(); }
+  else if (!typing && !e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase() === 'n') { e.preventDefault(); tambahCepat(); }
+});
+$('#fab').addEventListener('click', tambahCepat);
+$('#md').addEventListener('click', e => { if (e.target.id === 'md') tutup(); });
+$('#thn').addEventListener('change', semua);
+$('#muat').addEventListener('click', muat);
+bangun(); go('reg'); muat();
+</script>
+</body>
+</html>
